@@ -1,32 +1,32 @@
 Algoritmo Gestion_Cafe_Luna
 	Definir opcion_comando, orden Como Cadena
 	Definir mesas_disponibles, tiempo_espera Como Entero
-	Definir menu_actualizado, pedidos_priorizados, pago_procesado Como Lógico
-	// Inicialización
+	Definir menu_actualizado, pedidos_priorizados, pago_procesado Como LÃ³gico
+
 	mesas_disponibles <- 20
-	menu_actualizado <- FALSO // Número de mesas iniciales
+	menu_actualizado <- FALSO 
 	pedidos_priorizados <- FALSO
 	pago_procesado <- FALSO
 	tiempo_espera <- 0
-	// Menú principal de opciones
-	Escribir 'Bienvenido a la Gestión de Luna Café'
-	Escribir 'Seleccione una opción:'
-	Escribir '1. Gestión de Pedidos'
-	Escribir '2. Gestión de Mesas'
+	
+	Escribir 'Bienvenido a la GestiÃ³n de Luna CafÃ©'
+	Escribir 'Seleccione una opciÃ³n:'
+	Escribir '1. GestiÃ³n de Pedidos'
+	Escribir '2. GestiÃ³n de Mesas'
 	Escribir '3. Procesamiento de Pagos'
-	Escribir '4. Actualización del Menú'
+	Escribir '4. ActualizaciÃ³n del MenÃº'
 	Leer opcion_comando
-	Según opcion_comando Hacer
+	SegÃºn opcion_comando Hacer
 		'1':
-			// Reducción de errores en los pedidos
+			
 			Escribir 'Ingrese la orden del cliente:'
 			Leer orden
 			Escribir 'Pedido registrado: ', orden
 			pedidos_priorizados <- VERDADERO
 			Escribir 'Pedido priorizado y enviado a cocina.'
 		'2':
-			// Gestión eficiente de mesas
-			Escribir 'Gestión de Mesas'
+			
+			Escribir 'GestiÃ³n de Mesas'
 			Si mesas_disponibles>0 Entonces
 				mesas_disponibles <- mesas_disponibles-1
 				Escribir 'Mesa asignada. Mesas disponibles: ', mesas_disponibles
@@ -34,17 +34,17 @@ Algoritmo Gestion_Cafe_Luna
 				Escribir 'No hay mesas disponibles en este momento.'
 			FinSi
 		'3':
-			// Agilización de pagos
+			
 			Escribir 'Procesando pago...'
 			tiempo_espera <- tiempo_espera-5
-			pago_procesado <- VERDADERO // Simulación de tiempo de espera reducido
+			pago_procesado <- VERDADERO 
 			Escribir 'Pago completado. Tiempo de espera: ', tiempo_espera, ' minutos.'
 		'4':
-			// Actualización dinámica del menú
-			Escribir 'Actualizando menú...'
+			
+			Escribir 'Actualizando menÃº...'
 			menu_actualizado <- VERDADERO
-			Escribir 'Menú actualizado exitosamente. Se agregaron nuevas promociones.'
+			Escribir 'MenÃº actualizado exitosamente. Se agregaron nuevas promociones.'
 		De Otro Modo:
-			Escribir 'Opción no válida, por favor seleccione una opción válida.'
-	FinSegún
+			Escribir 'OpciÃ³n no vÃ¡lida, por favor seleccione una opciÃ³n vÃ¡lida.'
+	FinSegÃºn
 FinAlgoritmo
