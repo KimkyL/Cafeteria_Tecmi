@@ -20,7 +20,7 @@ Segun (VerMenu)
                 Caso Contrario:
                     Escribir "Error: No se encontro en el menu acaso lo escribiste bien"
             FinSegun
-            Escribir "¿Finalizar pedido? (Si/No)"
+            Escribir "Â¿Finalizar pedido? (Si/No)"
             Leer Finalizar
 			Hastaque alizarPedido = "Si"
 			Escribir "Se calcula el total y se almacena"
@@ -58,7 +58,7 @@ Segun (VerMenu)
 			Escribir "Mostrando cola de pedidos"
 	FinSegun
 	
-	Escribir "¿Finalizar Sistema? (Si/No)"
+	Escribir "Â¿Finalizar Sistema? (Si/No)"
 	Leer FinalizarSistema
 	Si FinalizarSistema = "Si" Entonces
 		Escribir "Este sistma finalizo y va hacer kabum en 2 segundos"
