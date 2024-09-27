@@ -1,30 +1,8 @@
-import tkinter as tk
-from tkinter import messagebox
-from tkinter import *
-import tkinter.font as tkFont
-from PIL import Image, ImageTk
-from datetime import datetime 
+from datetime import datetime  # Importa la clase datetime del módulo datetime para manejar fechas.
 
-# PERSONALIZACION DE LA VENTANA A VISUALIZAR
-ventanas = tk.Tk()
-ventanas.title("Sistema de gestión de Restaurante")
-ventanas.geometry("1250x650+150+50")
-ventanas.minsize(800, 500)
-ventanas.iconbitmap("luna-cafe.ico")
-ventanas.config(bg="#b79c6f")
-
-bg_normal = "black"
-fg_normal = "white"
-bg_hover = "#6d422d"
-
-# CONFIGURACIÓN DE LA FUENTE Y ESTILOS
-font_menu = tkFont.Font(family="Poppins", size=12, weight="bold")
-
-# FUNCIONES PARA LOS MENÚS
-class RestaurantApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Menú del Restaurante")
+class Restaurant:
+    def __init__(self):
+        # Inicializa el menú del restaurante con algunos productos y sus precios.
         self.menu = {
             "Hamburguesa": 80,
             "Hot Dog": 60,
@@ -36,298 +14,198 @@ class RestaurantApp:
             "Tacos": 90,
             "Pastel": 45
         }
+        # Inicializa las mesas reservadas, órdenes, pagos y promociones.
         self.mesas_apartadas = {}
-        self.promociones = {}
-        self.ordenes = {}
-        
-        # Área de visualización
-        self.menu_display = tk.Text(self.root, height=20, width=80, bg="#b79c6f", font=font_menu, fg=fg_normal, bd=0.5)
-        self.menu_display.pack()
-        
-        # Frame para el nuevo ítem
-        self.frame_nuevo_item = tk.Frame(self.root, bg="#b79c6f")
-        self.frame_nuevo_item.pack(pady=20)
-        self.frame_reservas = tk.Frame(self.root, bg="#b79c6f")
-        self.frame_reservas.pack(pady=20)
-        
-        self.frame_promociones = tk.Frame(self.root, bg="#b79c6f")
-        self.frame_promociones.pack(pady=10, padx=10, fill='x')
-
-        self.frame_ordenes = tk.Frame(self.root, bg="#b79c6f")
-        self.frame_ordenes.pack(side='right', padx=20, pady=10, fill='y')
-
-        # Mostrar el menú inicialmente
-        self.ver_menu()
-
+        self.ordenes = []
+        self.pagos = []
+        self.promociones = []
+    
     def ver_menu(self):
-        self.menu_display.delete('1.0', tk.END)
-        texto_centrado = "Menú disponible:\n"
-        self.menu_display.insert(tk.END, " " * 70 + texto_centrado)
+        # Muestra el menú disponible con sus precios.
+        print("Menu disponible:")
         for item, precio in self.menu.items():
-            self.menu_display.insert(tk.END, f"{item}: ${precio:.2f}\n")
-
-    def ver_reservaciones(self):
-        self.menu_display.delete('1.0', tk.END)
-        texto_centrado = "Mostrando Reservaciones\n"
-        self.menu_display.insert(tk.END, " " * 65 + texto_centrado)
-        detalles_reservacion = "Aquí se mostrarán las reservaciones..."
-        self.menu_display.insert(tk.END, " " * 40 + detalles_reservacion)
-
-    def ver_pedidos(self):
-        self.menu_display.delete('1.0', tk.END)
-        if not self.ordenes:
-            self.menu_display.insert(tk.END, "No hay pedidos en la cola.\n")
-        else:
-            self.menu_display.insert(tk.END, "Cola de Pedidos:\n")
-            for i, (mesa, pedidos) in enumerate(self.ordenes.items(), 1):
-                self.menu_display.insert(tk.END, f"Mesa {mesa}: {', '.join(pedidos)}\n")
+            print(f"{item}: ${precio:.2f}")
 
     def agregar_nuevo_item(self):
-        label_nombre = tk.Label(self.frame_nuevo_item, text="Nombre:", bg="#b79c6f", fg="white", font="Poppins")
-        label_nombre.grid(row=0, column=0, padx=5, pady=5)
-        self.entryNombre = tk.Entry(self.frame_nuevo_item)
-        self.entryNombre.grid(row=0, column=1, padx=5, pady=5)
-
-        label_precio = tk.Label(self.frame_nuevo_item, text="Precio:", bg="#b79c6f", fg="white", font="Poppins")
-        label_precio.grid(row=1, column=0, padx=5, pady=5)
-        self.entryPrecio = tk.Entry(self.frame_nuevo_item)
-        self.entryPrecio.grid(row=1, column=1, padx=5, pady=5)
-
-        boton_guardar = tk.Button(self.frame_nuevo_item, text="Guardar", command=self.guardar_item, bg="#b79c6f")
-        boton_guardar.grid(row=2, column=0, columnspan=2, pady=10)
-
-    def guardar_item(self):
-        nombre = self.entryNombre.get()
-        precio = self.entryPrecio.get()
-
-        try:
-            precio = float(precio)
-            self.menu[nombre] = precio
-            print(f"Se ha agregado: {nombre} con un precio de {precio}")
-            print("Menú actualizado:", self.menu)
-            self.entryNombre.delete(0, END)
-            self.entryPrecio.delete(0, END)
-            self.ver_menu()
-        except ValueError:
-            print("Error: El precio debe ser un número válido.")
-
-    def reservar_mesa(self):
-        label_numero_mesa = tk.Label(self.frame_reservas, text="Número de mesa:", bg="#b79c6f", fg="white", font="Poppins")
-        label_numero_mesa.grid(row=0, column=0, padx=5, pady=5, sticky='w')
-        self.entryNumeroMesa = tk.Entry(self.frame_reservas)
-        self.entryNumeroMesa.grid(row=0, column=1, padx=5, pady=5, sticky='w')
-
-        label_nombre_cliente = tk.Label(self.frame_reservas, text="Nombre del cliente:", bg="#b79c6f", fg="white", font="Poppins")
-        label_nombre_cliente.grid(row=1, column=0, padx=5, pady=5, sticky='w')
-        self.entryNombreCliente = tk.Entry(self.frame_reservas)
-        self.entryNombreCliente.grid(row=1, column=1, padx=5, pady=5, sticky='w')
-
-        boton_reservar = tk.Button(self.frame_reservas, text="Reservar Mesa", command=self.guardar_reserva, bg="#b79c6f")
-        boton_reservar.grid(row=2, column=0, columnspan=2, pady=10)
-
-    def guardar_reserva(self):
-        numero_mesa = self.entryNumeroMesa.get()
-        nombre_cliente = self.entryNombreCliente.get()
-
-        if numero_mesa and nombre_cliente:
-            self.mesas_apartadas[numero_mesa] = nombre_cliente
-            print(f"Se ha reservado la mesa {numero_mesa} para {nombre_cliente}")
-            print("Mesas reservadas:", self.mesas_apartadas)
-
-            self.entryNumeroMesa.delete(0, END)
-            self.entryNombreCliente.delete(0, END)
-            self.actualizar_display_reservas()
+        # Permite al usuario agregar un nuevo producto al menú.
+        item = input("Ingrese el nombre del nuevo producto: ").capitalize()
+        if item in self.menu:
+            print("Este producto ya existe en el menu.")
         else:
-            print("Error: Debes ingresar un número de mesa y el nombre del cliente.")
-
-    def actualizar_display_reservas(self):
-        self.menu_display.delete('1.0', tk.END)
-        self.menu_display.insert(tk.END, "Mesas reservadas:\n")
-        for numero_mesa, nombre_cliente in self.mesas_apartadas.items():
-            self.menu_display.insert(tk.END, f"Mesa {numero_mesa}: Reservada para {nombre_cliente}\n")
+            precio = float(input("Ingrese el precio del nuevo producto: "))
+            self.menu[item] = precio
+            print(f"{item} ha sido anadido al menu con un precio de ${precio:.2f}.")
 
     def agregar_promocion(self):
-        label_nombre_promocion = tk.Label(self.frame_promociones, text="Nombre de la promoción:", bg="#b79c6f", fg="white", font="Poppins")
-        label_nombre_promocion.grid(row=0, column=0, padx=5, pady=5, sticky='w')
-        self.entryNombrePromocion = tk.Entry(self.frame_promociones)
-        self.entryNombrePromocion.grid(row=0, column=1, padx=5, pady=5, sticky='w')
+        # Permite al usuario agregar una nueva promoción al sistema.
+        nombre = input("Ingrese el nombre de la promocion: ").capitalize()
+        tipo_promocion = input("Seleccione el tipo de promocion ('descuento', '2x1', 'regalo'): ").lower()
+        
+        # Obtiene el descuento si el tipo de promoción es descuento.
+        if tipo_promocion == "descuento":
+            descuento = float(input("Ingrese el descuento en porcentaje (ej. 10 para 10%): "))
+        else:
+            descuento = 0
 
-        label_descuento = tk.Label(self.frame_promociones, text="Descuento (%):", bg="#b79c6f", fg="white", font="Poppins")
-        label_descuento.grid(row=1, column=0, padx=5, pady=5, sticky='w')
-        self.entryDescuento = tk.Entry(self.frame_promociones)
-        self.entryDescuento.grid(row=1, column=1, padx=5, pady=5, sticky='w')
+        producto_regalo = None
+        # Si la promoción es de regalo, solicita el producto correspondiente.
+        if tipo_promocion == "regalo":
+            producto_regalo = input("Ingrese el nombre del producto de regalo: ").capitalize()
 
-        boton_guardar_promocion = tk.Button(self.frame_promociones, text="Guardar Promoción", command=self.guardar_promocion, bg="#b79c6f")
-        boton_guardar_promocion.grid(row=2, column=0, columnspan=2, pady=10)
+        producto_2x1 = None
+        # Si la promoción es 2x1, solicita el producto correspondiente.
+        if tipo_promocion == "2x1":
+            producto_2x1 = input("Ingrese el producto al que se le aplicara 2x1: ").capitalize()
 
-    def guardar_promocion(self):
-        nombre_promocion = self.entryNombrePromocion.get()
-        descuento = self.entryDescuento.get()
+        metodo_pago = input("¿Es una promocion valida solo al pagar con tarjeta? (s/n): ").lower() == 's'
+        
+        fecha_vencimiento = input("Ingrese la fecha de vencimiento (YYYY-MM-DD): ")
 
         try:
-            descuento = float(descuento)
-            self.promociones[nombre_promocion] = descuento
-            print(f"Promoción agregada: {nombre_promocion} con un descuento de {descuento}%")
-            print("Promociones actuales:", self.promociones)
-            self.entryNombrePromocion.delete(0, END)
-            self.entryDescuento.delete(0, END)
+            # Intenta convertir la fecha de vencimiento a un objeto de fecha.
+            fecha_venc = datetime.strptime(fecha_vencimiento, '%Y-%m-%d').date()
+            self.promociones.append({
+                "nombre": nombre,
+                "tipo": tipo_promocion,
+                "descuento": descuento,
+                "producto_regalo": producto_regalo,
+                "producto_2x1": producto_2x1,
+                "solo_tarjeta": metodo_pago,
+                "vencimiento": fecha_venc
+            })
+            print(f"Promocion {nombre} anadida, valida hasta {fecha_venc}.")
         except ValueError:
-            print("Error: El descuento debe ser un número válido.")
+            print("Fecha invalida, intente de nuevo.")
 
     def ver_promociones(self):
-        self.menu_display.delete('1.0', tk.END)
-        if not self.promociones:
-            self.menu_display.insert(tk.END, "No hay promociones disponibles.\n")
+        # Muestra las promociones activas en el sistema.
+        if self.promociones:
+            print("Promociones activas:")
+            for promo in self.promociones:
+                print(f"{promo['nombre']} - Tipo: {promo['tipo']}, valido hasta {promo['vencimiento']}.")
         else:
-            self.menu_display.insert(tk.END, "Promociones disponibles:\n")
-            for promo, desc in self.promociones.items():
-                self.menu_display.insert(tk.END, f"{promo}: {desc}% de descuento\n")
+            print("No hay promociones activas.")
 
-    def crear_orden(self):
-        label_numero_mesa = tk.Label(self.frame_ordenes, text="Número de mesa:", bg="#b79c6f", fg="white", font="Poppins")
-        label_numero_mesa.grid(row=0, column=0, padx=20, pady=5, sticky='w')  # Ajustado el espaciado
-        self.entryOrdenMesa = tk.Entry(self.frame_ordenes)
-        self.entryOrdenMesa.grid(row=0, column=1, padx=10, pady=5, sticky='w')
+    def aplicar_promocion(self, total, metodo_pago):
+        # Aplica las promociones disponibles al total de la orden.
+        promocion_aplicada = False
+        for promo in self.promociones:
+            if promo['vencimiento'] >= datetime.now().date():  # Verifica que la promoción esté vigente.
+                if promo['solo_tarjeta'] and metodo_pago != 'tarjeta':
+                    continue  # Si es solo para tarjeta y el pago no es con tarjeta, se salta.
 
-        label_items = tk.Label(self.frame_ordenes, text="Ítems (separados por comas):", bg="#b79c6f", fg="white", font="Poppins")
-        label_items.grid(row=1, column=0, padx=20, pady=5, sticky='w')  # Ajustado el espaciado
-        self.entryItems = tk.Entry(self.frame_ordenes)
-        self.entryItems.grid(row=1, column=1, padx=10, pady=5, sticky='w')
+                # Aplica el descuento si es una promoción de descuento.
+                if promo['tipo'] == 'descuento':
+                    aplicar = input(f"¿Desea aplicar la promocion '{promo['nombre']}' con {promo['descuento']}% de descuento? (s/n): ").lower()
+                    if aplicar == 's':
+                        descuento = total * (promo['descuento'] / 100)
+                        total -= descuento
+                        promocion_aplicada = True
+                        print(f"Se ha aplicado un descuento de ${descuento:.2f}.")
+                        break
+                # Aplica el 2x1 si corresponde.
+                elif promo['tipo'] == '2x1':
+                    if promo['producto_2x1'] in [orden['producto'] for orden in self.ordenes]:
+                        aplicar = input(f"¿Desea aplicar la promocion 2x1 en {promo['producto_2x1']}? (s/n): ").lower()
+                        if aplicar == 's':
+                            total -= self.menu[promo['producto_2x1']]
+                            promocion_aplicada = True
+                            print(f"Se ha aplicado el 2x1 en {promo['producto_2x1']}.")
+                            break
+                # Ofrece un producto gratis si es una promoción de regalo.
+                elif promo['tipo'] == 'regalo':
+                    aplicar = input(f"¿Desea aplicar la promocion '{promo['nombre']}' y recibir un {promo['producto_regalo']} gratis? (s/n): ").lower()
+                    if aplicar == 's':
+                        print(f"¡Has recibido un {promo['producto_regalo']} gratis!")
+                        promocion_aplicada = True
+                        break
+        if not promocion_aplicada:
+            print("No se aplico ninguna promocion.")
+        return total  # Retorna el total después de aplicar promociones.
 
-        boton_guardar_orden = tk.Button(self.frame_ordenes, text="Crear Orden", command=self.guardar_orden, bg="#b79c6f")
-        boton_guardar_orden.grid(row=2, column=0, columnspan=2, pady=10)
+    def Sumar_los_Pedidos(self, numero_mesa):
+        # Permite al usuario seleccionar productos y cantidades para agregar a su pedido.
+        total_pedido = 0
+        while True:
+            self.ver_menu()  # Muestra el menú.
+            item = input("Seleccione un producto (o 'finalizar' para terminar): ").capitalize()
+            if item == 'Finalizar':
+                break
+            elif item in self.menu:
+                cantidad = int(input(f"¿Cuántos {item} desea? "))
+                total_item = self.menu[item] * cantidad  # Calcula el total por el item.
+                total_pedido += total_item  # Suma al total del pedido.
+                self.ordenes.append({"mesa": numero_mesa, "producto": item, "cantidad": cantidad, "total_item": total_item})  # Agrega el pedido a las órdenes.
+            else:
+                print("Producto no disponible.")
+        print(f"Total a pagar para la mesa {numero_mesa}: ${total_pedido:.2f}")
+        return total_pedido
 
-    def guardar_orden(self):
-        numero_mesa = self.entryOrdenMesa.get()
-        items = self.entryItems.get()
-
-        if numero_mesa and items:
-            items_lista = [item.strip() for item in items.split(",")]
-            self.ordenes[numero_mesa] = items_lista
-            print(f"Orden creada para la mesa {numero_mesa}: {items_lista}")
-            self.entryOrdenMesa.delete(0, END)
-            self.entryItems.delete(0, END)
-            self.ver_pedidos()
+    def procesar_pago(self, numero_mesa):
+        # Procesa el pago de la mesa indicada.
+        total_pedido = sum(orden['total_item'] for orden in self.ordenes if orden['mesa'] == numero_mesa)
+        if total_pedido > 0:
+            metodo_pago = input("Seleccione el metodo de pago ('tarjeta' o 'efectivo'): ").lower()
+            total_con_descuento = self.aplicar_promocion(total_pedido, metodo_pago)  # Aplica promociones.
+            if metodo_pago == 'efectivo':
+                pago_cliente = float(input("Ingrese el monto pagado por el cliente: "))
+                if pago_cliente >= total_con_descuento:
+                    cambio = pago_cliente - total_con_descuento
+                    print(f"Pago procesado. Cambio a devolver: ${cambio:.2f}.")
+                else:
+                    print("El monto ingresado es menor al total. No se puede procesar el pago.")
+            elif metodo_pago == 'tarjeta':
+                print(f"Pago procesado para la mesa {numero_mesa} por ${total_con_descuento:.2f} con tarjeta.")
+            else:
+                print("Metodo de pago no valido. Intente de nuevo.") 
         else:
-            print("Error: Debes ingresar un número de mesa y los ítems.")
+            print(f"No hay pedidos pendientes para la mesa {numero_mesa}.")
 
-def on_enter(e):
-    e.widget.config(bg=bg_hover)
+    def menu_principal(self):
+        # Muestra el menú principal del sistema y permite al usuario interactuar con él.
+        while True:
+            print("\n--- Menu del Sistema ---")   
+            print("1. Ver Menu")  
+            print("2. Agregar Nuevo Producto al Menu")  
+            print("3. Reservar Mesa")
+            print("4. Ver Mesas Reservadas")
+            print("5. Agregar Pedido")
+            print("6. Ver Cola de Pedidos")
+            print("7. Agregar Promocion") 
+            print("8. Ver Promociones")
+            print("9. Procesar Pago")
+            print("10. Salir")
+            opcion = input("Seleccione una opcion: ")  
 
-def on_leave(e):
-    e.widget.config(bg=bg_normal)
+            if opcion == "1":
+                self.ver_menu()  # Muestra el menú.
+            elif opcion == "2":
+                self.agregar_nuevo_item()  # Permite agregar un nuevo producto.
+            elif opcion == "3":
+                numero_mesa = int(input("Ingrese el número de mesa: "))
+                self.mesas_apartadas[numero_mesa] = True  # Reserva la mesa.
+                print(f"Mesa {numero_mesa} reservada.")
+            elif opcion == "4":
+                print(f"Mesas reservadas: {', '.join(map(str, self.mesas_apartadas.keys()))}")  # Muestra las mesas reservadas.
+            elif opcion == "5":
+                numero_mesa = int(input("Ingrese el número de mesa para agregar pedido: "))
+                self.Sumar_los_Pedidos(numero_mesa)  # Agrega pedidos a la mesa.
+            elif opcion == "6":
+                print("Cola de Pedidos:", self.ordenes)  # Muestra la cola de pedidos.
+            elif opcion == "7":
+                self.agregar_promocion()  # Agrega una nueva promoción.
+            elif opcion == "8":
+                self.ver_promociones()  # Muestra las promociones.
+            elif opcion == "9":
+                numero_mesa = int(input("Ingrese el número de mesa para procesar pago: "))
+                self.procesar_pago(numero_mesa)  # Procesa el pago.
+            elif opcion == "10":
+                print("Saliendo del sistema...")  
+                break  # Sale del sistema.
+            else:
+                print("Opción no válida. Intente de nuevo.")
 
-# CONFIGURACIÓN DE MENÚS Y BOTONES
-menu_frame = tk.Frame(ventanas, bg=bg_normal, height=30)
-menu_frame.pack(fill='x')
-
-app = RestaurantApp(ventanas)
-
-# Creación de los botones Menubutton
-boton_menu_comida = tk.Menubutton(menu_frame, text="Menú del restaurante", bg=bg_normal, fg=fg_normal, 
-                                   relief='flat', font=font_menu)
-boton_menu_mesas = tk.Menubutton(menu_frame, text="Reserva de mesas", bg=bg_normal, fg=fg_normal, 
-                                  relief='flat', font=font_menu)
-boton_menu_ordenes = tk.Menubutton(menu_frame, text="Pedidos y Órdenes", bg=bg_normal, fg=fg_normal, 
-                                    relief='flat', font=font_menu)
-boton_menu_promociones = tk.Menubutton(menu_frame, text="Promociones", bg=bg_normal, fg=fg_normal, 
-                                        relief='flat', font=font_menu)
-
-# ASIGNACIÓN DE MENÚS A CADA BOTÓN
-menu_comida = tk.Menu(boton_menu_comida, tearoff=0, activebackground=bg_hover)
-menu_comida.add_command(label="Ver Menú", command=app.ver_menu)
-menu_comida.add_command(label="Agregar Producto", command=app.agregar_nuevo_item)
-boton_menu_comida.config(menu=menu_comida)
-
-menu_mesas = tk.Menu(boton_menu_mesas, tearoff=0, activebackground=bg_hover)
-menu_mesas.add_command(label="Ver Reservaciones", command=app.ver_reservaciones)
-menu_mesas.add_command(label="Reservar Mesa", command=app.reservar_mesa)
-boton_menu_mesas.config(menu=menu_mesas)
-
-menu_ordenes = tk.Menu(boton_menu_ordenes, tearoff=0, activebackground=bg_hover)
-menu_ordenes.add_command(label="Ver pedidos", command=app.ver_pedidos)
-menu_ordenes.add_command(label="Crear Orden", command=app.crear_orden)
-boton_menu_ordenes.config(menu=menu_ordenes)
-
-menu_promociones = tk.Menu(boton_menu_promociones, tearoff=0, activebackground=bg_hover)
-menu_promociones.add_command(label="Agregar Promoción", command=app.agregar_promocion)
-menu_promociones.add_command(label="Ver promociones", command=app.ver_promociones)
-boton_menu_promociones.config(menu=menu_promociones)
-
-# EMPAQUETAR LOS BOTONES
-boton_menu_comida.pack(side='left', padx=10)
-boton_menu_mesas.pack(side='left', padx=10)
-boton_menu_ordenes.pack(side='left', padx=10)
-boton_menu_promociones.pack(side='left', padx=10)
-
-# Configurar el efecto hover para los botones
-boton_menu_comida.bind("<Enter>", on_enter)
-boton_menu_comida.bind("<Leave>", on_leave)
-
-boton_menu_mesas.bind("<Enter>", on_enter)
-boton_menu_mesas.bind("<Leave>", on_leave)
-
-boton_menu_ordenes.bind("<Enter>", on_enter)
-boton_menu_ordenes.bind("<Leave>", on_leave)
-
-boton_menu_promociones.bind("<Enter>", on_enter)
-boton_menu_promociones.bind("<Leave>", on_leave)
-
-
-
-
-# Crear etiqueta principal
-pantalla = tk.Label(ventanas, text="Bienvenido a Luna Café\nSeleccione una opción en el menú", 
-                    bg="#b79c6f", fg="white", font=("Poppins", 12, "bold"))
-pantalla.pack(pady=50)
-
-canvas = tk.Canvas(ventanas, width=220, height=700, background="#b79c6f", highlightthickness=0)
-
-# Cargar la primera imagen PNG con transparencia
-img = Image.open("file.png")  # Asegúrate de que sea un archivo PNG con transparencia
-img = img.resize((200, 250))  # Redimensionar si es necesario
-img_tk = ImageTk.PhotoImage(img)  # Convertir la imagen a un formato compatible con Tkinter
-
-# Cargar la segunda imagen PNG con transparencia
-img2 = Image.open("file2.png")  # Asegúrate de que sea un archivo PNG con transparencia
-img2 = img2.resize((200, 250))  # Redimensionar si es necesario
-img2_tk = ImageTk.PhotoImage(img2)
-
-# Cargar la tercera imagen PNG con transparencia
-img3 = Image.open("file3.png")  # Asegúrate de que sea un archivo PNG con transparencia
-img3 = img3.resize((200, 250))  # Redimensionar si es necesario
-img3_tk = ImageTk.PhotoImage(img3)
-
-# Agregar la primera imagen al Canvas
-canvas.create_image(-40, -40, anchor="nw", image=img_tk)
-
-# Agregar la segunda imagen al Canvas, asegurando que esté dentro del área visible
-canvas.create_image(20, 100, anchor="nw", image=img2_tk)  # Alinear la segunda imagen debajo de la primera
-canvas.create_image(-15, 280, anchor="nw", image=img3_tk) 
-
-canvas.place(x=10, y=60)
-
-# Segundo canvas 
-canvas2 = tk.Canvas(ventanas, width=200, height=900, background="#b79c6f", highlightthickness=0)
-
-# Cargar la cuarta imagen PNG con transparencia (taza de café)
-img4 = Image.open("Liquidon.png")  # Asegúrate de que sea un archivo PNG con transparencia
-img4 = img4.resize((200, 250))  # Redimensionar si es necesario
-img4_tk = ImageTk.PhotoImage(img4)  # Convertir la imagen a un formato compatible con Tkinter
-
-# Cargar la quinta imagen PNG con transparencia (texto)
-img5 = Image.open("taza.png")  # Asegúrate de que sea un archivo PNG con transparencia
-img5 = img5.resize((200, 250))  # Redimensionar si es necesario
-img5_tk = ImageTk.PhotoImage(img5)
-
-# Agregar la cuarta imagen al Canvas
-canvas2.create_image(30, 90, anchor="nw", image=img4_tk)
-
-# Agregar la quinta imagen al Canvas
-canvas2.create_image(0, 220, anchor="nw", image=img5_tk)
-
-canvas2.place(x=1030, y=60)
-
-# Iniciar el loop de la ventana
-ventanas.mainloop()  
+# Crea una instancia del restaurante y ejecuta el menú principal.
+restaurante = Restaurant()  
+restaurante.menu_principal()  
 
